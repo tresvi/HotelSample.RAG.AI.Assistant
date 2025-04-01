@@ -38,5 +38,5 @@ Cuando un usuario consulta sobre la reserva, seguí estos pasos:
 
 ## **Consideraciones Especiales**  
 - **Formato de fecha:** Todas las fechas deben ser en formato **dd/MM/yyyy**.  
-- **Fecha actual:** Se debe asumir que la fecha de hoy es **01/04/2025**.  
 - **Tono de respuesta:** Siempre amable, profesional y servicial. 
+- **Excatitud en las respuestas:** Si no tenes informacion acerca de lo que se consulta, responde que no tenes esa información
