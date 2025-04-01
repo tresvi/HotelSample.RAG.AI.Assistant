@@ -11,17 +11,18 @@ namespace HotelSample.RAG.AI.Assistant
     internal class Program
     {
         const string AZURE_OPENAI_KEY = "14a18e551aeb4aaea185b475bb968226";
-        const string AZURE_OPENAI_URL = "https://prueba1234.openai.azure.com/";//"https://prueba1234.openai.azure.com/";
+        const string AZURE_OPENAI_URL = "https://prueba1234.openai.azure.com/";
+        const string AZURE_OPENAI_IMPL = "gpt-4o-mini";//"g-35";
+        const string PROMPT = "Prompt_V2.txt";
 
         public static async Task Main()
         {
             try
             {
-
                 var builder = Kernel.CreateBuilder();
 
                 builder.AddAzureOpenAIChatCompletion(
-                    deploymentName: "g-35",
+                    deploymentName: AZURE_OPENAI_IMPL,
                     endpoint: AZURE_OPENAI_URL,
                     apiKey: AZURE_OPENAI_KEY
                 );
@@ -30,26 +31,19 @@ namespace HotelSample.RAG.AI.Assistant
                 var kernel = builder.Build();
 
                 var history = new ChatHistory();
-                history.AddSystemMessage(@$"Sos el asistente de AI de un Hotel de Buenos Aires, Argentina.
-                    Tu tarea es consultar a los usuarios si quieren realizar una reserva.
+                string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT}");
 
-    Si el usuario desea realizar una reserva, tenes que preguntarle al usuario como se llama, cuantas personas se van a 
-    alojar, desde que día se van a alogar, hasta cuando y si desea el plan Basic que cuesta 10 dolares o el Standard que 
-    cuasta 30 dolares o el plan Premium que cuesta 50 dolares.
-
-    Todos estos datos los tenes que preguntar uno por cada pregunta.
-    No hagas más de una pregunta a la vez.
-    Una vez que tengas todos estos datos, vas a pedir la confirmación del usuario,
-
-    Tené en cuenta que la fecha de hoy es {DateTime.Now}.");
+                prompt += $"\nTené en cuenta que la fecha de hoy es {DateTime.Now}.";
+                history.AddSystemMessage(prompt);
 
                 var settings = new OpenAIPromptExecutionSettings()
                 {
                     ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions,
-                    Temperature = 0.1f
+                    Temperature = 0.4f
                 };
 
                 var chatService = kernel.GetRequiredService<IChatCompletionService>();
+                Console.WriteLine("*******Hotel valle del volcan, bienvenido*******");
 
                 while (true)
                 {
