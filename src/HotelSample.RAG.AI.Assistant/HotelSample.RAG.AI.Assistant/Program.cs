@@ -17,10 +17,6 @@ namespace HotelSample.RAG.AI.Assistant
         const string AZURE_OPENAI_IMPL = "gpt-4o-mini";//"g-35";
         const string AZURE_OPENAI_EMBEDD_IMPL = "embedding";
 
-        const string PINECONE_URL = "https://rag-assistant-test-dnq0bbo.svc.aped-4627-b74a.pinecone.io/query";
-        //const string PINECONE_URL = "https://infobna-dnq0bbo.svc.aped-4627-b74a.pinecone.io/indexes/infobna/query";
-        const string PINECONE_API_KEY = "4248cc68-5f9a-43c5-9824-d93770850ec3";
-
         const string PROMPT = "Prompt_V2.txt";
 
 
@@ -41,12 +37,15 @@ namespace HotelSample.RAG.AI.Assistant
                     AZURE_OPENAI_KEY
                 );
 
-                builder.Plugins.AddFromType<ReservacionesPlugin>("Hotel");
-                builder.Plugins.AddFromType<PineconeQueryPlugin>("PineConeQuery");
+                builder.Plugins.AddFromType<ReservacionesPlugin>("Reservaciones");
+                builder.Plugins.AddFromType<PineconeQueryPlugin>("PineconeQuery");
                 //builder.Plugins.AddFromType<WebSearchDuckDuckGOPlugin>("WebSearchDuckDuckGo");
                 builder.Plugins.AddFromType<WebSearchSerpApiPlugin>("WebSearchSerpAPI");
                 builder.Plugins.AddFromType<ClipboardPlugin>("Clipboard");
                 var kernel = builder.Build();
+
+                var chatService = kernel.GetRequiredService<IChatCompletionService>();
+                var embeddingService = kernel.GetRequiredService<ITextEmbeddingGenerationService>();
 
                 var history = new ChatHistory();
 
@@ -59,9 +58,6 @@ namespace HotelSample.RAG.AI.Assistant
                     ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions,
                     Temperature = 0.4f
                 };
-
-                var chatService = kernel.GetRequiredService<IChatCompletionService>();
-                var embeddingService = kernel.GetRequiredService<ITextEmbeddingGenerationService>();
 
                 Console.WriteLine($"*******Hotel valle del volcan, bienvenido - {DateTime.Now:hh:mm:ss}*******");
 
