@@ -15,6 +15,7 @@
 	<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.4" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.16.1" />
     <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.16.1" />
+    <PackageReference Include="TextCopy" Version="6.2.1" />
 	<PackageReference Include="Tiktoken" Version="2.2.0" />
   </ItemGroup>
 

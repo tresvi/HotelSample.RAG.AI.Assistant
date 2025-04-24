@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace HotelSample.RAG.AI.Assistant.PlugIns
 {
-    public class HotelPlugin
+    public class ReservacionesPlugin
     {
         static List<Reserva> _reservaciones = new List<Reserva>();
 

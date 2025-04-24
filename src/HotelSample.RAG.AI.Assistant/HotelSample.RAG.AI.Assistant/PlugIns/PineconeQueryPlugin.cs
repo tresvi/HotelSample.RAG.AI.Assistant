@@ -15,11 +15,11 @@ namespace HotelSample.RAG.AI.Assistant.PlugIns
 {
     internal class PineconeQueryPlugin
     {
-
         const string PINECONE_URL = "https://rag-assistant-test-dnq0bbo.svc.aped-4627-b74a.pinecone.io/query";
         //const string PINECONE_URL = "https://infobna-dnq0bbo.svc.aped-4627-b74a.pinecone.io/indexes/infobna/query";
         const string PINECONE_API_KEY = "4248cc68-5f9a-43c5-9824-d93770850ec3";
-        const double SCORE_MIN = 82;    //Porcentaje de similitud
+        const int TOPK = 6;
+        const float SCORE_MIN = 0.82f;
 
 
         private readonly ITextEmbeddingGenerationService _embeddingService;
@@ -36,18 +36,34 @@ namespace HotelSample.RAG.AI.Assistant.PlugIns
             Debug.WriteLine($"********Pregunta: {pregunta}");
 
             var vectors = await _embeddingService.GenerateEmbeddingAsync(pregunta!);
-            var pineconeResult = await QueryPinecone(vectors.ToArray(), "");
-            
+            PineconeResult pineconeResult = await QueryPinecone(vectors.ToArray(), "");
+
+            Debug.WriteLine("**********RESPUESTA CRUDA***********");
+            foreach (Match match in pineconeResult.Matches)
+            {
+                Debug.WriteLine($"id:{match.Id}\tScore:{match.Score}\tMetadata:{match.Metadata.Values}");
+            }
+
+            pineconeResult.Matches = pineconeResult.Matches.Where(x => x.Score > SCORE_MIN);
+
+            Debug.WriteLine("********RESPUESTA FILTRADA**********");
+            foreach (Match match in pineconeResult.Matches)
+            {
+                Debug.WriteLine($"id:{match.Id}\tScore:{match.Score}\tMetadata:{match.Metadata.Values}");
+            }
+
+            int respuestasAceptables = pineconeResult.Matches.Count(x => x.Score > SCORE_MIN);
+            if (respuestasAceptables == 0)
+            {
+                return new{Success = false, Respuesta = ""};
+            }
+
             string message = "Si la pregunta del usuario es sobre instalaciones y caracteristicas del hotel " +
                 "debes basarte en el siguiente contenido para responder ese tipo de consultas\n\n" +
                 string.Join(".\n ", pineconeResult.Matches.Select(x => x.Metadata["content"])) +
                 "\n Pregunta del usuario: " + pregunta;
 
-            return new
-            {
-                Success = true,
-                Respuesta = message
-            };
+            return new{ Success = true, Respuesta = message};
         }
 
 
@@ -71,7 +87,7 @@ namespace HotelSample.RAG.AI.Assistant.PlugIns
                 {
                     @namespace = "ns1",
                     vector = vectors,
-                    topK = 3,
+                    topK = TOPK,
                     includeValues = true,
                     includeMetadata = true
                 };

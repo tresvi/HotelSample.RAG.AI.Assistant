@@ -1,16 +1,11 @@
 ﻿#pragma warning disable SKEXP0001, SKEXP0003, SKEXP0010, SKEXP0011, SKEXP0050, SKEXP0052
 
-using HotelSample.RAG.AI.Assistant.Models;
 using HotelSample.RAG.AI.Assistant.PlugIns;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Embeddings;
-using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text;
 using Tiktoken;
-using System.Diagnostics;
 
 
 namespace HotelSample.RAG.AI.Assistant
@@ -46,8 +41,11 @@ namespace HotelSample.RAG.AI.Assistant
                     AZURE_OPENAI_KEY
                 );
 
-                builder.Plugins.AddFromType<HotelPlugin>("Hotel");
+                builder.Plugins.AddFromType<ReservacionesPlugin>("Hotel");
                 builder.Plugins.AddFromType<PineconeQueryPlugin>("PineConeQuery");
+                //builder.Plugins.AddFromType<WebSearchDuckDuckGOPlugin>("WebSearchDuckDuckGo");
+                builder.Plugins.AddFromType<WebSearchSerpApiPlugin>("WebSearchSerpAPI");
+                builder.Plugins.AddFromType<ClipboardPlugin>("Clipboard");
                 var kernel = builder.Build();
 
                 var history = new ChatHistory();
@@ -91,47 +89,6 @@ namespace HotelSample.RAG.AI.Assistant
             catch (Exception ex)
             {
                 Console.Error.WriteLine("ERROR:" + ex.ToString());
-            }
-        }
-
-
-        static async Task<PineconeResult> QueryPinecone(float[] vectors, string keyword)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                string apiKey = PINECONE_API_KEY;
-                string endpoint = PINECONE_URL;
-                client.DefaultRequestHeaders.Add("Api-Key", apiKey);
-
-                //https://docs.pinecone.io/guides/data/filter-with-metadata
-                var filter = new Dictionary<string, Dictionary<string, string>>();
-
-                filter.Add("content", new Dictionary<string, string>()
-                {
-                    { "$in", keyword }
-                });
-
-                var payload = new
-                {
-                    @namespace = "ns1",
-                    vector = vectors,
-                    topK = 3,
-                    includeValues = true,
-                    includeMetadata = true
-                };
-
-                string jsonPayload = JsonSerializer.Serialize(payload, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-
-                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = await client.PostAsync(endpoint, content);
-
-                PineconeResult result = await response.Content.ReadFromJsonAsync<PineconeResult>(new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
-
-                return result;
             }
         }
 
