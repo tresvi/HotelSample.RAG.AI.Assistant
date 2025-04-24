@@ -47,11 +47,12 @@ namespace HotelSample.RAG.AI.Assistant
                 );
 
                 builder.Plugins.AddFromType<HotelPlugin>("Hotel");
+                builder.Plugins.AddFromType<PineconeQueryPlugin>("PineConeQuery");
                 var kernel = builder.Build();
 
                 var history = new ChatHistory();
-                string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT}");
 
+                string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT}");
                 prompt += $"\nTené en cuenta que la fecha de hoy es {DateTime.Now}.";
                 history.AddSystemMessage(prompt);
 
@@ -70,22 +71,6 @@ namespace HotelSample.RAG.AI.Assistant
                 {
                     Console.ForegroundColor = ConsoleColor.White;
                     string userInput = Console.ReadLine();
-
-                    /**********************PINECONE*******************************/
-                    var vectors = await embeddingService.GenerateEmbeddingAsync(userInput!);
-
-                    var pineconeResult = await QueryPinecone(vectors.ToArray(), "");
-
-                    string message = "Si la pregunta del usuario es sobre instalaciones y caracteristicas del hotel " +
-                        "debes basarte en el siguiente contenido para responder ese tipo de consultas\n\n" +
-                        string.Join(".\n ", pineconeResult.Matches.Select(x => x.Metadata["content"])) +
-                        "\n Pregunta del usuario: " + userInput;
-
-                    Olvidar(ref history);
-                    history.AddUserMessage(message!);
-                    Debug.WriteLine(history.ToString());
-                    Debug.WriteLine($"*******Tokens de la pregunta: {CountTokens(message)}");
-                    /*************************************************************/
 
                     history.AddUserMessage(userInput);
                     
