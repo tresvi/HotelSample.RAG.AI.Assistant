@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using TextCopy;
 
-namespace HotelSample.RAG.AI.Assistant.PlugIns
+namespace HotelSample.RAG.AI.Assistant.Plugins
 {
     public class ClipboardPlugin
     {

@@ -1,6 +1,6 @@
 ﻿#pragma warning disable SKEXP0001, SKEXP0003, SKEXP0010, SKEXP0011, SKEXP0050, SKEXP0052
 
-using HotelSample.RAG.AI.Assistant.PlugIns;
+using HotelSample.RAG.AI.Assistant.Plugins;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -17,7 +17,9 @@ namespace HotelSample.RAG.AI.Assistant
         const string AZURE_OPENAI_IMPL = "gpt-4o-mini";//"g-35";
         const string AZURE_OPENAI_EMBEDD_IMPL = "embedding";
 
-        const string PROMPT = "Prompt_V2.txt";
+        const string PROMPT_1 = "Prompt_V2.txt";
+        const string PROMPT_2 = "Prompt_Dibujo_grafos_V2.txt";
+        const string PROMPT_3 = "Prompt_ManejoArchivos.txt";
 
 
         public static async Task Main()
@@ -42,6 +44,9 @@ namespace HotelSample.RAG.AI.Assistant
                 //builder.Plugins.AddFromType<WebSearchDuckDuckGOPlugin>("WebSearchDuckDuckGo");
                 builder.Plugins.AddFromType<WebSearchSerpApiPlugin>("WebSearchSerpAPI");
                 builder.Plugins.AddFromType<ClipboardPlugin>("Clipboard");
+                builder.Plugins.AddFromType<AbrirArchivoConNotepadPlugin>("AbrirArchivoConNotepad");
+                builder.Plugins.AddFromType<ArchivosEscrituraPlugin>("ArchivosEscritura");
+                builder.Plugins.AddFromType<ArchivosLecturaPlugin>("ArchivosLectura");
                 var kernel = builder.Build();
 
                 var chatService = kernel.GetRequiredService<IChatCompletionService>();
@@ -49,7 +54,9 @@ namespace HotelSample.RAG.AI.Assistant
 
                 var history = new ChatHistory();
 
-                string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT}");
+                string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_1}");
+                prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_2}");
+                //prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_3}");
                 prompt += $"\nTené en cuenta que la fecha de hoy es {DateTime.Now}.";
                 history.AddSystemMessage(prompt);
 
@@ -59,7 +66,8 @@ namespace HotelSample.RAG.AI.Assistant
                     Temperature = 0.4f
                 };
 
-                Console.WriteLine($"*******Hotel valle del volcan, bienvenido - {DateTime.Now:hh:mm:ss}*******");
+                //Console.WriteLine($"*******Hotel valle del volcan, bienvenido - {DateTime.Now:hh:mm:ss}*******");
+                Console.WriteLine($"*******Mi nombre es MarIA, estoy para asistirte en lo que necesites - {DateTime.Now:hh:mm:ss}*******");
 
                 while (true)
                 {

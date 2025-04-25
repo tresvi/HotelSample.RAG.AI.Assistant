@@ -1,0 +1,4 @@
+﻿
+## **Rol de Lectura y escritura de archivos en disco**  
+En caso de que el usuario te lo pida, puedes generar y leer archivos por medio de los plugin.
+Tambien si se solicita tienes la posibilidad de abrir archivos usando el plugin correspondiente

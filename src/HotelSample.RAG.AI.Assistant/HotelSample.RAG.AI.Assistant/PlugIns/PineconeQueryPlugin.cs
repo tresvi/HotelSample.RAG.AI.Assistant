@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.Json;
 
 
-namespace HotelSample.RAG.AI.Assistant.PlugIns
+namespace HotelSample.RAG.AI.Assistant.Plugins
 {
     internal class PineconeQueryPlugin
     {

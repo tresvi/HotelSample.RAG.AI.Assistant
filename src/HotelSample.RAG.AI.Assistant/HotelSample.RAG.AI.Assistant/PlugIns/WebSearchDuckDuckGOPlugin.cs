@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace HotelSample.RAG.AI.Assistant.PlugIns
+namespace HotelSample.RAG.AI.Assistant.Plugins
 {
     public class WebSearchDuckDuckGOPlugin
     {
