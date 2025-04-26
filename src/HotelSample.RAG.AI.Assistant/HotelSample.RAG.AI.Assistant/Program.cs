@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Embeddings;
+using System.ClientModel;
 using Tiktoken;
 
 
@@ -66,28 +67,49 @@ namespace HotelSample.RAG.AI.Assistant
                     Temperature = 0.4f
                 };
 
+                DateTime ultimaRespuestaLLM = DateTime.Now;
+
                 //Console.WriteLine($"*******Hotel valle del volcan, bienvenido - {DateTime.Now:hh:mm:ss}*******");
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"*******Mi nombre es MarIA, estoy para asistirte en lo que necesites - {DateTime.Now:hh:mm:ss}*******");
 
                 while (true)
                 {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    string userInput = Console.ReadLine();
-
-                    history.AddUserMessage(userInput);
-                    
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    string response = "";
-
-                    Console.Write(DateTime.Now.ToString("hh:mm:ss - "));
-                    await foreach (var item in chatService.GetStreamingChatMessageContentsAsync(history, settings, kernel))
+                    try
                     {
-                        response = response + item.ToString();
-                        Console.Write(item.ToString());
-                    }
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("\n>>");
+                        string userInput = Console.ReadLine();
 
-                    Console.WriteLine();
-                    history.AddAssistantMessage(response);
+                        ultimaRespuestaLLM = DateTime.Now;
+                        history.AddUserMessage(userInput);
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        string response = "";
+
+                        Console.Write(DateTime.Now.ToString("hh:mm:ss - "));
+                        await foreach (var item in chatService.GetStreamingChatMessageContentsAsync(history, settings, kernel))
+                        {
+                            response = response + item.ToString();
+                            Console.Write(item.ToString());
+                        }
+
+                        Console.WriteLine();
+                        history.AddAssistantMessage(response);
+                    }
+                    catch (ClientResultException )
+                    {
+                        TimeSpan tiempoEspera  = DateTime.Now - ultimaRespuestaLLM;
+                        tiempoEspera = tiempoEspera.Add(TimeSpan.FromSeconds(5));
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"******Proceso en espera de Tokens. La aplicacion se detendrá por " +
+                            $"60 segundos. Luego podrá repitir la pregunta******");
+                        //Thread.Sleep((int)tiempoEspera.TotalMilliseconds);
+                        Thread.Sleep(60000);
+                        Console.WriteLine($"******Listo, puede continuar******");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }
+               
                 }
             }
             catch (Exception ex)
