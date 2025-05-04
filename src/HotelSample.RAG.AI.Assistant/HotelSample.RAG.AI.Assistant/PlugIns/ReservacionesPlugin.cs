@@ -2,9 +2,9 @@
 using Microsoft.SemanticKernel;
 using System.ComponentModel;
 
-namespace HotelSample.RAG.AI.Assistant.PlugIns
+namespace HotelSample.RAG.AI.Assistant.Plugins
 {
-    public class HotelPlugin
+    public class ReservacionesPlugin
     {
         static List<Reserva> _reservaciones = new List<Reserva>();
 

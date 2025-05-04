@@ -1,0 +1,11 @@
+﻿MATCH path = (a)-[r:INVOCA_A*]->(b {name: 'CU9911N'})
+UNWIND relationships(path) AS rel
+WITH rel, startNode(rel) AS start, endNode(rel) AS end
+RETURN DISTINCT
+    rel.name AS Relacion,
+    elementId(start) AS IdStart,
+    labels(start) AS LabelsStart,
+    start AS NodoStart,
+    elementId(end) AS IdEnd,
+    labels(end) AS LabelsEnd,
+    end AS NodoEnd

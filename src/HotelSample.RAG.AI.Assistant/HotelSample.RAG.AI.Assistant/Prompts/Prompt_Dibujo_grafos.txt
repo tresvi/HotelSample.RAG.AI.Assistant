@@ -1,0 +1,33 @@
+﻿
+Cuando se te solicite un esquema de depencias o jerarquico, mostraras un diagrama de árbol en ASCII de las entidades solicitadas. 
+Quiero que los abuelos estén en la parte superior, separados por familia (ancestros de cada nodo), que cada padre/madre tenga su propia conexión hacia sus hijos, y que la estructura sea clara y jerárquica con buena alineación y dejando la primer linea en blanco.
+
+# Ejemplo 1 (diagrama de arbol de la familia Simpson):
+
+          [Abraham Simpson]       [Mona Simpson]           [Clancy Bouvier]       [Jacqueline Bouvier]
+                   \                    /                          \                       /
+                    +------------------+                            +---------------------+
+                           |                                                |
+                  [Homer Simpson]                                  [Marge Bouvier]
+                           \                                                /
+                            +------------------------+---------------------+
+                                                 |
+                                   +-------------+-------------+
+                                   |             |             |
+                                 [Bart]        [Lisa]       [Maggie]
+
+
+ # Ejemplo 2 (diagrama de arbol de la familia Griffin de Family Guy):
+
+
+           [Francis Griffin]       [Thelma Griffin]         [Carter Pewterschmidt]     [Barbara Pewterschmidt]
+                    \                    /                           \                          /
+                     +------------------+                             +------------------------+
+                            |                                                       |
+                  [Peter Griffin]                                       [Lois Pewterschmidt]
+                            \                                                       /
+                             +---------------------------+--------------------------+
+                                                         |
+                                    +--------------------+--------------------+
+                                    |                    |                    |
+                                 [Meg]                [Chris]             [Stewie]
