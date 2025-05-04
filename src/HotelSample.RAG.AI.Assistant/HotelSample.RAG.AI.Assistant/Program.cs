@@ -18,9 +18,9 @@ namespace HotelSample.RAG.AI.Assistant
         const string AZURE_OPENAI_IMPL = "gpt-4o-mini";//"g-35";
         const string AZURE_OPENAI_EMBEDD_IMPL = "embedding";
 
-        const string PROMPT_1 = "Prompt_V2.txt";
-        const string PROMPT_2 = "Prompt_Dibujo_grafos_V2.txt";
-        const string PROMPT_3 = "Prompt_ManejoArchivos.txt";
+        const string PROMPT_BASE = "Prompt_V2.txt";
+        const string PROMPT_MANEJO_GRAFOS_COMPLEJOS = "Prompt_Dibujo_grafos_V2.txt";
+        const string PROMPT_MANEJO_ARCHIVOS = "Prompt_ManejoArchivos.txt";
 
 
         public static async Task Main()
@@ -48,6 +48,7 @@ namespace HotelSample.RAG.AI.Assistant
                 builder.Plugins.AddFromType<AbrirArchivoConNotepadPlugin>("AbrirArchivoConNotepad");
                 builder.Plugins.AddFromType<ArchivosEscrituraPlugin>("ArchivosEscritura");
                 builder.Plugins.AddFromType<ArchivosLecturaPlugin>("ArchivosLectura");
+                builder.Plugins.AddFromType<Neo4JTreesPlugin>("SistemaAbel");
                 var kernel = builder.Build();
 
                 var chatService = kernel.GetRequiredService<IChatCompletionService>();
@@ -55,9 +56,9 @@ namespace HotelSample.RAG.AI.Assistant
 
                 var history = new ChatHistory();
 
-                string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_1}");
-                prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_2}");
-                //prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_3}");
+                string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_BASE}");
+                //prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_2}");
+                prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_MANEJO_ARCHIVOS}");
                 prompt += $"\nTené en cuenta que la fecha de hoy es {DateTime.Now}.";
                 history.AddSystemMessage(prompt);
 

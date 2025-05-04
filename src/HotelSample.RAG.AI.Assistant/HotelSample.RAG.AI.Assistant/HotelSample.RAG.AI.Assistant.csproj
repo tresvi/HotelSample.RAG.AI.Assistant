@@ -15,6 +15,8 @@
 	<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.4" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.47.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.47.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Spectre.Console" Version="0.50.1-preview.0.5" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
 	<PackageReference Include="Tiktoken" Version="2.2.0" />
   </ItemGroup>
