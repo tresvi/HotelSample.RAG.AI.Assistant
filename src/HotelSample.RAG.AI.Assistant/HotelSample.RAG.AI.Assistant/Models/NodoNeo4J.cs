@@ -9,16 +9,18 @@ internal class NodoNeo4J
     public string? Name { get; set; }
     public Environment Environment { get; set; }
     public string? Proceso { get; set; }
+    public string? Objetivo { get; set; }
     public List<string> Labels { get; set; } = new List<string>();
     public List<NodoNeo4J> Hijos { get; set; } = new List<NodoNeo4J>();
 
 
-    public NodoNeo4J(string? id, string? idPadre, string? name, string? environment, string? proceso, List<string>? labels)
+    public NodoNeo4J(string? id, string? idPadre, string? name, string? environment, string? proceso, string? objetivo, List<string>? labels)
     {
         Id = id;
         IdPadre = idPadre;
         Name = name;
         Proceso = proceso;
+        Objetivo = objetivo;
         Labels = labels ?? [];
 
         if (environment == null || environment.ToUpper().Trim() == "MAINFRAME")

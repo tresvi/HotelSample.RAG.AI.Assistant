@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Embeddings;
+using System;
 using System.ClientModel;
 using Tiktoken;
 
@@ -13,14 +14,20 @@ namespace HotelSample.RAG.AI.Assistant
 {
     internal class Program
     {
-        const string AZURE_OPENAI_KEY = "14a18e551aeb4aaea185b475bb968226";
-        const string AZURE_OPENAI_URL = "https://prueba1234.openai.azure.com/";
-        const string AZURE_OPENAI_IMPL = "gpt-4o-mini";//"g-35";
+        //const string AZURE_OPENAI_URL = "https://prueba1234.openai.azure.com/";
+        //const string AZURE_OPENAI_KEY = "14a18e551aeb4aaea185b475bb968226";
+        //const string AZURE_OPENAI_IMPL = "gpt-4o-mini";//"g-35";
+
+        const string AZURE_OPENAI_URL = "https://test-openai-24-07-09.openai.azure.com/";
+        const string AZURE_OPENAI_KEY = "52574dec62c04a49a0e45942967fd07d";
+        const string AZURE_OPENAI_IMPL = "gpt-4o";
+
         const string AZURE_OPENAI_EMBEDD_IMPL = "embedding";
 
         const string PROMPT_BASE = "Prompt_V2.txt";
         const string PROMPT_MANEJO_GRAFOS_COMPLEJOS = "Prompt_Dibujo_grafos_V2.txt";
         const string PROMPT_MANEJO_ARCHIVOS = "Prompt_ManejoArchivos.txt";
+        const string PROMPT_ANALISIS_DEPENDENCIAS = "Prompt_AnalisisDeDependencias.txt";
 
 
         public static async Task Main()
@@ -53,12 +60,12 @@ namespace HotelSample.RAG.AI.Assistant
 
                 var chatService = kernel.GetRequiredService<IChatCompletionService>();
                 var embeddingService = kernel.GetRequiredService<ITextEmbeddingGenerationService>();
-
-                var history = new ChatHistory();
-
+                ChatHistory history = new ChatHistory();
+               
                 string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_BASE}");
                 //prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_2}");
                 prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_MANEJO_ARCHIVOS}");
+                //prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_ANALISIS_DEPENDENCIAS}");
                 prompt += $"\nTené en cuenta que la fecha de hoy es {DateTime.Now}.";
                 history.AddSystemMessage(prompt);
 
@@ -70,9 +77,9 @@ namespace HotelSample.RAG.AI.Assistant
 
                 DateTime ultimaRespuestaLLM = DateTime.Now;
 
-                //Console.WriteLine($"*******Hotel valle del volcan, bienvenido - {DateTime.Now:hh:mm:ss}*******");
+                Console.WriteLine($"*******Hotel valle del volcan, bienvenido - {DateTime.Now:hh:mm:ss}*******");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"*******Mi nombre es MarIA, estoy para asistirte en lo que necesites - {DateTime.Now:hh:mm:ss}*******");
+                //Console.WriteLine($"*******Mi nombre es MarIA, estoy para asistirte en lo que necesites - {DateTime.Now:hh:mm:ss}*******");
 
                 while (true)
                 {
@@ -84,7 +91,7 @@ namespace HotelSample.RAG.AI.Assistant
 
                         ultimaRespuestaLLM = DateTime.Now;
                         history.AddUserMessage(userInput);
-
+                        
                         Console.ForegroundColor = ConsoleColor.Green;
                         string response = "";
 
@@ -98,7 +105,7 @@ namespace HotelSample.RAG.AI.Assistant
                         Console.WriteLine();
                         history.AddAssistantMessage(response);
                     }
-                    catch (ClientResultException )
+                    catch (ClientResultException ex)
                     {
                         TimeSpan tiempoEspera  = DateTime.Now - ultimaRespuestaLLM;
                         tiempoEspera = tiempoEspera.Add(TimeSpan.FromSeconds(5));

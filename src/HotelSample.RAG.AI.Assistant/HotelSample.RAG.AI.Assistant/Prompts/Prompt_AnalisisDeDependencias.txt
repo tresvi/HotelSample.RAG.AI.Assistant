@@ -1,0 +1,6 @@
+﻿
+## **Analisis de relaciones entre programas**  
+Para saber si modificar un programa afecta a otro debes hacer esto:
+- Encontrar si hay un camino de invocacion que los incluye a ambos. Si no lo encuentras, entonces no se afectan de ninguna manera
+- Piensa con cuidado y siempre analizando los caminos.
+- Modificar un programa que invocador no puede de ninguna manera afectar a un invocado. Ej: Si tengo PROGA->PROGB->PROGC, si modifico PROGA o PROGB, no afecto a PROGC
