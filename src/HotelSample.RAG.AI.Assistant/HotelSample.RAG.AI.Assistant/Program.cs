@@ -77,9 +77,9 @@ namespace HotelSample.RAG.AI.Assistant
 
                 DateTime ultimaRespuestaLLM = DateTime.Now;
 
-                //Console.WriteLine($"*******Hotel valle del volcan, bienvenido - {DateTime.Now:hh:mm:ss}*******");
+                Console.WriteLine($"*******Hotel valle del volcan, bienvenido - {DateTime.Now:hh:mm:ss}*******");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"*******Mi nombre es MarIA, estoy para asistirte en lo que necesites - {DateTime.Now:hh:mm:ss}*******");
+                //Console.WriteLine($"*******Mi nombre es MarIA, estoy para asistirte en lo que necesites - {DateTime.Now:hh:mm:ss}*******");
 
                 while (true)
                 {
