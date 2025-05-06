@@ -55,17 +55,13 @@ namespace HotelSample.RAG.AI.Assistant
                 builder.Plugins.AddFromType<AbrirArchivoConNotepadPlugin>("AbrirArchivoConNotepad");
                 builder.Plugins.AddFromType<ArchivosEscrituraPlugin>("ArchivosEscritura");
                 builder.Plugins.AddFromType<ArchivosLecturaPlugin>("ArchivosLectura");
-                //builder.Plugins.AddFromType<Neo4JTreesPlugin>("SistemaAbel");
+                builder.Plugins.AddFromType<Neo4JTreesPlugin>("SistemaAbel");
                 var kernel = builder.Build();
 
-                ChatHistory history = new ChatHistory();
-                var neo4JPlugin = new Neo4JTreesPlugin(history); 
-                kernel.Plugins.AddFromObject(neo4JPlugin, "MiPlugin");
                 var chatService = kernel.GetRequiredService<IChatCompletionService>();
                 var embeddingService = kernel.GetRequiredService<ITextEmbeddingGenerationService>();
-                //var history = kernel.GetRequiredService<ChatHistory>();
+                ChatHistory history = new ChatHistory();
                
-
                 string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_BASE}");
                 //prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_2}");
                 prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_MANEJO_ARCHIVOS}");

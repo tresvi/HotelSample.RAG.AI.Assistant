@@ -16,13 +16,7 @@ namespace HotelSample.RAG.AI.Assistant.Plugins
         private const string NEO4J_URL = "http://localhost:7474/db/neo4j/tx/commit";
         
         private static readonly HttpClient _httpClient = new HttpClient();
-        private readonly ChatHistory? _chat;
-        
-        public Neo4JTreesPlugin(ChatHistory? chat)
-        {
-            _chat = chat;
-        }
-
+ 
         /*
         //Version Case Sensitive
         string _programasRelacionadosQuery = """
