@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Embeddings;
+using System;
 using System.ClientModel;
 using Tiktoken;
 
@@ -13,14 +14,20 @@ namespace HotelSample.RAG.AI.Assistant
 {
     internal class Program
     {
-        const string AZURE_OPENAI_KEY = "14a18e551aeb4aaea185b475bb968226";
-        const string AZURE_OPENAI_URL = "https://prueba1234.openai.azure.com/";
-        const string AZURE_OPENAI_IMPL = "gpt-4o-mini";//"g-35";
+        //const string AZURE_OPENAI_URL = "https://prueba1234.openai.azure.com/";
+        //const string AZURE_OPENAI_KEY = "14a18e551aeb4aaea185b475bb968226";
+        //const string AZURE_OPENAI_IMPL = "gpt-4o-mini";//"g-35";
+
+        const string AZURE_OPENAI_URL = "https://test-openai-24-07-09.openai.azure.com/";
+        const string AZURE_OPENAI_KEY = "52574dec62c04a49a0e45942967fd07d";
+        const string AZURE_OPENAI_IMPL = "gpt-4o";
+
         const string AZURE_OPENAI_EMBEDD_IMPL = "embedding";
 
         const string PROMPT_BASE = "Prompt_V2.txt";
         const string PROMPT_MANEJO_GRAFOS_COMPLEJOS = "Prompt_Dibujo_grafos_V2.txt";
         const string PROMPT_MANEJO_ARCHIVOS = "Prompt_ManejoArchivos.txt";
+        const string PROMPT_ANALISIS_DEPENDENCIAS = "Prompt_AnalisisDeDependencias.txt";
 
 
         public static async Task Main()
@@ -48,17 +55,21 @@ namespace HotelSample.RAG.AI.Assistant
                 builder.Plugins.AddFromType<AbrirArchivoConNotepadPlugin>("AbrirArchivoConNotepad");
                 builder.Plugins.AddFromType<ArchivosEscrituraPlugin>("ArchivosEscritura");
                 builder.Plugins.AddFromType<ArchivosLecturaPlugin>("ArchivosLectura");
-                builder.Plugins.AddFromType<Neo4JTreesPlugin>("SistemaAbel");
+                //builder.Plugins.AddFromType<Neo4JTreesPlugin>("SistemaAbel");
                 var kernel = builder.Build();
 
+                ChatHistory history = new ChatHistory();
+                var neo4JPlugin = new Neo4JTreesPlugin(history); 
+                kernel.Plugins.AddFromObject(neo4JPlugin, "MiPlugin");
                 var chatService = kernel.GetRequiredService<IChatCompletionService>();
                 var embeddingService = kernel.GetRequiredService<ITextEmbeddingGenerationService>();
-
-                var history = new ChatHistory();
+                //var history = kernel.GetRequiredService<ChatHistory>();
+               
 
                 string prompt = File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_BASE}");
                 //prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_2}");
                 prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_MANEJO_ARCHIVOS}");
+                //prompt += File.ReadAllText(@$"..\..\..\Prompts\{PROMPT_ANALISIS_DEPENDENCIAS}");
                 prompt += $"\nTené en cuenta que la fecha de hoy es {DateTime.Now}.";
                 history.AddSystemMessage(prompt);
 
@@ -84,7 +95,7 @@ namespace HotelSample.RAG.AI.Assistant
 
                         ultimaRespuestaLLM = DateTime.Now;
                         history.AddUserMessage(userInput);
-
+                        
                         Console.ForegroundColor = ConsoleColor.Green;
                         string response = "";
 
@@ -98,7 +109,7 @@ namespace HotelSample.RAG.AI.Assistant
                         Console.WriteLine();
                         history.AddAssistantMessage(response);
                     }
-                    catch (ClientResultException )
+                    catch (ClientResultException ex)
                     {
                         TimeSpan tiempoEspera  = DateTime.Now - ultimaRespuestaLLM;
                         tiempoEspera = tiempoEspera.Add(TimeSpan.FromSeconds(5));
