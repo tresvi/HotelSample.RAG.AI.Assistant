@@ -22,7 +22,7 @@ namespace HotelSample.RAG.AI.Assistant
         const string AZURE_OPENAI_KEY = "52574dec62c04a49a0e45942967fd07d";
         const string AZURE_OPENAI_IMPL = "gpt-4o";
 
-        const string AZURE_OPENAI_EMBEDD_IMPL = "embedding";
+        const string AZURE_OPENAI_EMBEDD_IMPL = "text-embedding-ada-002"; //"embedding";
 
         const string PROMPT_BASE = "Prompt_V2.txt";
         const string PROMPT_MANEJO_GRAFOS_COMPLEJOS = "Prompt_Dibujo_grafos_V2.txt";
