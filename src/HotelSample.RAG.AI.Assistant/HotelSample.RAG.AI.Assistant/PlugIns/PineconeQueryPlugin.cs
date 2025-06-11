@@ -33,37 +33,46 @@ namespace HotelSample.RAG.AI.Assistant.Plugins
         public async Task<object> ConsultarComodidades(
         [Description("La consulta que realiza el usuario acerca de instalaciones, servicios y comodidades.")] string pregunta)
         {
-            Debug.WriteLine($"********Pregunta: {pregunta}");
-
-            var vectors = await _embeddingService.GenerateEmbeddingAsync(pregunta!);
-            PineconeResult pineconeResult = await QueryPinecone(vectors.ToArray(), "");
-
-            Debug.WriteLine("**********RESPUESTA CRUDA***********");
-            foreach (Match match in pineconeResult.Matches)
+            try
             {
-                Debug.WriteLine($"id:{match.Id}\tScore:{match.Score}\tMetadata:{match.Metadata.Values}");
+                Debug.WriteLine($"********Pregunta: {pregunta}");
+
+                var vectors = await _embeddingService.GenerateEmbeddingAsync(pregunta!);
+                PineconeResult pineconeResult = await QueryPinecone(vectors.ToArray(), "");
+
+                Debug.WriteLine("**********RESPUESTA CRUDA***********");
+                foreach (Match match in pineconeResult.Matches)
+                {
+                    Debug.WriteLine($"id:{match.Id}\tScore:{match.Score}\tMetadata:{match.Metadata.Values}");
+                }
+
+                pineconeResult.Matches = pineconeResult.Matches.Where(x => x.Score > SCORE_MIN);
+
+                Debug.WriteLine("********RESPUESTA FILTRADA**********");
+                foreach (Match match in pineconeResult.Matches)
+                {
+                    Debug.WriteLine($"id:{match.Id}\tScore:{match.Score}\tMetadata:{match.Metadata.Values}");
+                }
+
+                int respuestasAceptables = pineconeResult.Matches.Count(x => x.Score > SCORE_MIN);
+                if (respuestasAceptables == 0)
+                {
+                    return new { Success = false, Respuesta = "" };
+                }
+
+                string message = "Si la pregunta del usuario es sobre instalaciones y caracteristicas del hotel " +
+                    "debes basarte en el siguiente contenido para responder ese tipo de consultas\n\n" +
+                    string.Join(".\n ", pineconeResult.Matches.Select(x => x.Metadata["content"])) +
+                    "\n Pregunta del usuario: " + pregunta;
+
+                return new { Success = true, Respuesta = message };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR al consultar Pinecone: {ex.Message}");
+                throw;
             }
 
-            pineconeResult.Matches = pineconeResult.Matches.Where(x => x.Score > SCORE_MIN);
-
-            Debug.WriteLine("********RESPUESTA FILTRADA**********");
-            foreach (Match match in pineconeResult.Matches)
-            {
-                Debug.WriteLine($"id:{match.Id}\tScore:{match.Score}\tMetadata:{match.Metadata.Values}");
-            }
-
-            int respuestasAceptables = pineconeResult.Matches.Count(x => x.Score > SCORE_MIN);
-            if (respuestasAceptables == 0)
-            {
-                return new{Success = false, Respuesta = ""};
-            }
-
-            string message = "Si la pregunta del usuario es sobre instalaciones y caracteristicas del hotel " +
-                "debes basarte en el siguiente contenido para responder ese tipo de consultas\n\n" +
-                string.Join(".\n ", pineconeResult.Matches.Select(x => x.Metadata["content"])) +
-                "\n Pregunta del usuario: " + pregunta;
-
-            return new{ Success = true, Respuesta = message};
         }
 
 
